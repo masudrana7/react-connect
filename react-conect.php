@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: AAAA React Connect
+ * Plugin Name: AAAA-----lll React Connect
  */
 
 /**
@@ -44,29 +44,57 @@ class ReactConnect {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'rc_update_options' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $this, 'login_permission_callback' ],
+			]
+		);
+		register_rest_route(
+			'RC/v1/api',
+			'/getOptions',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'rc_get_options' ],
+				'permission_callback' => [ $this, 'login_permission_callback' ],
 			]
 		);
 	}
+	
+	/**
+	 * @return true
+	 */
+	public function login_permission_callback() {
+		return current_user_can( 'manage_options' );
+	}
 
 	/**
-	 * @return void
+	 * @return array
 	 */
 	public function rc_update_options( $request ) {
+		$result       = [
+			'message' => esc_html__( 'Update failed. Maybe change not found. ', 'dfsdfd' ),
+		];
 		$params       = $request->get_params();
 		$get_settings = get_option( 'react_connect_settings', [] );
-		error_log( print_r( $get_settings, true ) . "\n\n", 3, __DIR__ . '/old-log.txt' );
 		if ( isset( $params['name'] ) ) {
 			$get_settings['name'] = $params['name'];
 		}
 		if ( isset( $params['agree'] ) ) {
 			$get_settings['agree'] = $params['agree'];
 		}
-		update_option( 'react_connect_settings', $get_settings );
-		error_log( print_r( $get_settings, true ) . "\n\n", 3, __DIR__ . '/log.txt' );
-		return [];
+		$options           = update_option( 'react_connect_settings', $get_settings );
+		$result['updated'] = boolval( $options );
+		if ( $result['updated'] ) {
+			$result['message'] = esc_html__( 'Updated.', 'ancenter' );
+		}
+		return $result;
 	}
-
+	
+	/**
+	 * @return false|string
+	 */
+	public function rc_get_options() {
+		$the_settings = get_option( 'react_connect_settings', [] );
+		return wp_json_encode( $the_settings );
+	}
 
 	/**
 	 * @return void

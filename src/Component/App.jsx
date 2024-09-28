@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Input,
     Layout,
@@ -13,13 +13,14 @@ const {
     Header,
     Content
 } = Layout;
-import { updateOptions } from '../Utilis/Data'
+import {getOptions, updateOptions} from '../Utilis/Data'
 const App = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     const [ InputValue, setInPutValue ] = useState([]);
+    const [ renderOptions, setReRenderOptions ] = useState(true );
 
     const onChangeSetUp = (key, value) => {
         const settings = {
@@ -29,11 +30,22 @@ const App = () => {
         setInPutValue( settings );
     }
 
+    const getTheOptions = async () => {
+        if ( renderOptions ){
+          const options = await getOptions();
+          await setInPutValue( options );
+          await setReRenderOptions( false );
+        }
+    }
+
     const onSave = async () => {
         await updateOptions( InputValue );
-        console.log( InputValue );
-
+        await setReRenderOptions( true );
     }
+
+    useEffect(() => {
+        getTheOptions();
+    }, [renderOptions]);
 
     return (
         <Layout>
