@@ -1,6 +1,7 @@
 <?php
 /*
- * Plugin Name: AAAA-----lll React Connect
+ * Plugin Name: AAAA- lll React Connect
+ * Version: 1.0.0
  */
 
 /**
@@ -57,7 +58,7 @@ class ReactConnect {
 			]
 		);
 	}
-	
+
 	/**
 	 * @return true
 	 */
@@ -87,7 +88,7 @@ class ReactConnect {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @return false|string
 	 */
@@ -123,7 +124,7 @@ class ReactConnect {
 	 */
 	public function admin_menu_register() {
 		add_menu_page(
-			'React Conect',
+			__( 'React Connect', 'react-connect' ),
 			'React Conect',
 			'manage_options',
 			'react-connect',
